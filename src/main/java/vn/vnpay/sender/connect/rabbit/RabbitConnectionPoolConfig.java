@@ -1,18 +1,18 @@
 package vn.vnpay.sender.connect.rabbit;
 
+import vn.vnpay.sender.util.AppConfigSingleton;
+
 public class RabbitConnectionPoolConfig {
-    private static final String SERVER_NAME = "localhost";
-    public static final int MAX_POOL_SIZE = 20;
-    public static final int MIN_POOL_SIZE = 5;
-    public static final int INIT_POOL_SIZE = 10;
-    public static final String DB_PORT = "1521";
-    public static final String QUEUENAME = "sender";
-    public static final String EXHCHANGENAME = "sender_exchange";
 
-    public static final String EXHCHANGETYPE = "direct";
+    public static final int MAX_POOL_SIZE = AppConfigSingleton.getInstance().getIntProperty("rabbitmq.max_pool_size");
+    public static final int MIN_POOL_SIZE = AppConfigSingleton.getInstance().getIntProperty("rabbitmq.min_pool_size");;
+    public static final int INIT_POOL_SIZE = AppConfigSingleton.getInstance().getIntProperty("rabbitmq.init_pool_size");
+    public static final String QUEUE_NAME = AppConfigSingleton.getInstance().getStringProperty("rabbitmq.queue_name");;
+    public static final String EXCHANGE_NAME = AppConfigSingleton.getInstance().getStringProperty("rabbitmq.exchange_name");;
+    public static final String EXCHANGE_TYPE =AppConfigSingleton.getInstance().getStringProperty("rabbitmq.exchange_type");;
+    public static final String ROUTING_KEY = AppConfigSingleton.getInstance().getStringProperty("rabbitmq.routing_key");;
+//    public static final String URL = AppConfigSingleton.getInstance().getStringProperty("rabbitmq.url");
+    public static final String HOST = AppConfigSingleton.getInstance().getStringProperty("rabbitmq.host");
+    public static final long TIME_OUT = AppConfigSingleton.getInstance().getIntProperty("rabbitmq.time_out");
 
-    public static final String ROUTING_KEY = "sender_info";
-    public static final String SID = "OFFLINE";
-    public static final String URL =  "jdbc:oracle:thin:@" + SERVER_NAME + ":" + DB_PORT + ":" + SID;
-    public static final long TIME_OUT = 200;
 }
