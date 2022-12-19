@@ -30,7 +30,7 @@ public class ApiService {
 
         String message = createRequest(data);
 
-        RabbitConnectionCell conn = rabbitConnectionPool.creatConnection();
+        RabbitConnectionCell conn = rabbitConnectionPool.getConnection();
         String response = conn.sendAndReceive(message);
         rabbitConnectionPool.releaseConnection(conn);
         return response;

@@ -37,6 +37,7 @@ public class ApiController {
         long start = System.currentTimeMillis();
         String message = apiService.sendToCore(data);
         long end = System.currentTimeMillis();
+
         log.info("end - start: {}", end - start);
         log.info("Time from api request to response is: {} ms", end - start);
         return message;

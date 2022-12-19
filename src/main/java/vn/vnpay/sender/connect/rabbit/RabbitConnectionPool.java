@@ -16,7 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class RabbitConnectionPool {
     private LinkedBlockingQueue<RabbitConnectionCell> pool = new LinkedBlockingQueue<>();
 
-    private ConnectionFactory factory = new ConnectionFactory();
+    private  ConnectionFactory factory;
 
     protected int numOfConnectionCreated = 0;
     protected int max_pool_size;
@@ -24,7 +24,7 @@ public class RabbitConnectionPool {
     protected int min_pool_size;
     protected long time_out = 10000;
 
-    protected String url;
+    protected String host;
     protected String queueName;
     protected String exchangeName;
     protected String exchangeType;
@@ -39,14 +39,15 @@ public class RabbitConnectionPool {
         if (instancePool == null) {
             instancePool = new RabbitConnectionPool();
             instancePool.init_pool_size = RabbitConnectionPoolConfig.INIT_POOL_SIZE;
-            instancePool.max_pool_size=RabbitConnectionPoolConfig.MAX_POOL_SIZE;
-            instancePool.min_pool_size=RabbitConnectionPoolConfig.MIN_POOL_SIZE;
-            instancePool.url=RabbitConnectionPoolConfig.URL;
-            instancePool.queueName=RabbitConnectionPoolConfig.QUEUENAME;
-            instancePool.exchangeName=RabbitConnectionPoolConfig.EXHCHANGENAME;
-            instancePool.exchangeType=RabbitConnectionPoolConfig.EXHCHANGETYPE;
-            instancePool.routingKey=RabbitConnectionPoolConfig.ROUTING_KEY;
-            instancePool.time_out=RabbitConnectionPoolConfig.TIME_OUT;
+            instancePool.max_pool_size = RabbitConnectionPoolConfig.MAX_POOL_SIZE;
+            instancePool.min_pool_size = RabbitConnectionPoolConfig.MIN_POOL_SIZE;
+            instancePool.factory =  new ConnectionFactory();
+            instancePool.factory.setHost(RabbitConnectionPoolConfig.HOST);
+            instancePool.queueName = RabbitConnectionPoolConfig.QUEUE_NAME;
+            instancePool.exchangeName = RabbitConnectionPoolConfig.EXCHANGE_NAME;
+            instancePool.exchangeType = RabbitConnectionPoolConfig.EXCHANGE_TYPE;
+            instancePool.routingKey = RabbitConnectionPoolConfig.ROUTING_KEY;
+            instancePool.time_out = RabbitConnectionPoolConfig.TIME_OUT;
             /*
              * When the number of connection > min connection , close TimeOut Connection
              */
@@ -81,7 +82,7 @@ public class RabbitConnectionPool {
                 numOfConnectionCreated++;
             }
         } catch (Exception e) {
-            log.warn("[Message : can not start connection pool] - [Connection pool : {0}] - " + "[Exception : {1}]",
+            log.warn("[Message : can not start connection pool] - [Connection pool : {}] - " + "[Exception : {}]",
                     this.toString(), e);
         }
         thread.start();
@@ -89,7 +90,7 @@ public class RabbitConnectionPool {
         log.info("Start Connection pool in : {} ms", (end_time - start_time));
     }
 
-    public synchronized RabbitConnectionCell creatConnection() {
+    public synchronized RabbitConnectionCell getConnection() {
         log.info("begin creating rabbit connection!");
         RabbitConnectionCell connectionWraper = null;
         if (pool.size() == 0 && numOfConnectionCreated < max_pool_size) {
@@ -112,7 +113,7 @@ public class RabbitConnectionPool {
             e.printStackTrace();
         }
         connectionWraper.setRelaxTime(System.currentTimeMillis());
-        log.info("set relax time: {0}", connectionWraper.getRelaxTime());
+        log.info("set relax time: {}", connectionWraper.getRelaxTime());
         return connectionWraper;
     }
 

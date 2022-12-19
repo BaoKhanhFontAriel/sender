@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -61,14 +62,14 @@ public class RabbitConnectionCell {
                     .build();
 
             // send message
-            this.channel.basicPublish(exchangeName, routingKey, props, message.getBytes("UTF-8"));
+            this.channel.basicPublish(exchangeName, routingKey, props, message.getBytes(StandardCharsets.UTF_8));
 
             // receive message
             final CompletableFuture<String> response = new CompletableFuture<>();
 
             String ctag = this.channel.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
                 if (delivery.getProperties().getCorrelationId().equals(corrId)) {
-                    response.complete(new String(delivery.getBody(), "UTF-8"));
+                    response.complete(new String(delivery.getBody(), StandardCharsets.UTF_8));
                 }
             }, consumerTag -> {
             });
