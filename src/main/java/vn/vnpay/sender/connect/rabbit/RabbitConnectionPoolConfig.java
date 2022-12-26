@@ -15,4 +15,5 @@ public class RabbitConnectionPoolConfig {
     public static final String HOST = AppConfigSingleton.getInstance().getStringProperty("rabbitmq.host");
     public static final long TIME_OUT = AppConfigSingleton.getInstance().getIntProperty("rabbitmq.time_out");
 
+    public static final String REPLY_TO = AppConfigSingleton.getInstance().getStringProperty( "rabbitmq.reply-to");
 }

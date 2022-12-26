@@ -54,11 +54,10 @@ public class RabbitConnectionCell {
 
         try {
 
-            String replyQueueName = this.channel.queueDeclare().getQueue();
             AMQP.BasicProperties props = new AMQP.BasicProperties
                     .Builder()
                     .correlationId(corrId)
-                    .replyTo(replyQueueName)
+                    .replyTo(RabbitConnectionPoolConfig.REPLY_TO)
                     .build();
 
             // send message
@@ -67,7 +66,7 @@ public class RabbitConnectionCell {
             // receive message
             final CompletableFuture<String> response = new CompletableFuture<>();
 
-            String ctag = this.channel.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
+            String ctag = this.channel.basicConsume(RabbitConnectionPoolConfig.REPLY_TO, true, (consumerTag, delivery) -> {
                 if (delivery.getProperties().getCorrelationId().equals(corrId)) {
                     response.complete(new String(delivery.getBody(), StandardCharsets.UTF_8));
                 }
@@ -93,6 +92,7 @@ public class RabbitConnectionCell {
 
     public void close() {
         try {
+            this.channel.close();
             this.conn.close();
         } catch (Exception e) {
             log.warn("connection is closed: {0}", e);
