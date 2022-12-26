@@ -91,6 +91,7 @@ public class RabbitConnectionPool {
         try {
             RabbitConnectionCell conn = pool.take();
             conn.getChannel().queueDeclare(RabbitConnectionPoolConfig.REPLY_TO, false,false, false, null);
+            releaseConnection(conn);
         } catch (InterruptedException | IOException e) {
             log.info("fail to create reply queue: ", e);
         }
