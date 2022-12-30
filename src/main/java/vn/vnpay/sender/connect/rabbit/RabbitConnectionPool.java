@@ -6,16 +6,19 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import vn.vnpay.sender.util.AppConfigSingleton;
 
 import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@Slf4j
 @Setter
 @Getter
 @ToString
 public class RabbitConnectionPool {
+
+    private static final Logger log = LoggerFactory.getLogger(RabbitConnectionCell.class);
     private LinkedBlockingQueue<RabbitConnectionCell> pool = new LinkedBlockingQueue<>();
 
     private  ConnectionFactory factory;
@@ -91,7 +94,7 @@ public class RabbitConnectionPool {
         try {
             RabbitConnectionCell conn = pool.take();
             conn.getChannel().queueDeclare(RabbitConnectionPoolConfig.REPLY_TO, false,false, false, null);
-            releaseConnection(conn);
+//            releaseConnection(conn);
         } catch (InterruptedException | IOException e) {
             log.info("fail to create reply queue: ", e);
         }
