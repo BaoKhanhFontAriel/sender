@@ -93,6 +93,7 @@ public class RabbitConnectionCell {
 
     public void close() {
         try {
+            this.channel.close();
             this.conn.close();
         } catch (Exception e) {
             log.warn("connection is closed: {0}", e);
