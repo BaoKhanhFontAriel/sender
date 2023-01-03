@@ -6,21 +6,27 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import vn.vnpay.sender.util.AppConfigSingleton;
 
+import java.io.IOException;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@Slf4j
 @Setter
 @Getter
 @ToString
+@Slf4j
 public class RabbitConnectionPool {
+
+//    private static final Logger log = LoggerFactory.getLogger(RabbitConnectionCell.class);
     private LinkedBlockingQueue<RabbitConnectionCell> pool = new LinkedBlockingQueue<>();
 
     private  ConnectionFactory factory;
 
     protected int numOfConnectionCreated = 0;
-    protected int max_pool_size;
-    protected int init_pool_size;
+    protected int maxPoolSize;
+    protected int initPoolSize;
     protected int min_pool_size;
     protected long time_out = 10000;
 
@@ -38,8 +44,8 @@ public class RabbitConnectionPool {
     public synchronized static RabbitConnectionPool getInstancePool() {
         if (instancePool == null) {
             instancePool = new RabbitConnectionPool();
-            instancePool.init_pool_size = RabbitConnectionPoolConfig.INIT_POOL_SIZE;
-            instancePool.max_pool_size = RabbitConnectionPoolConfig.MAX_POOL_SIZE;
+            instancePool.initPoolSize = RabbitConnectionPoolConfig.INIT_POOL_SIZE;
+            instancePool.maxPoolSize = RabbitConnectionPoolConfig.MAX_POOL_SIZE;
             instancePool.min_pool_size = RabbitConnectionPoolConfig.MIN_POOL_SIZE;
             instancePool.factory =  new ConnectionFactory();
             instancePool.factory.setHost(RabbitConnectionPoolConfig.HOST);
@@ -65,7 +71,6 @@ public class RabbitConnectionPool {
                         }
                     }
                 }
-
             });
         }
         return instancePool;
@@ -76,7 +81,7 @@ public class RabbitConnectionPool {
         // Load Connection to Pool
         start_time = System.currentTimeMillis();
         try {
-            for (int i = 0; i < init_pool_size; i++) {
+            for (int i = 0; i < initPoolSize; i++) {
                 RabbitConnectionCell connection = new RabbitConnectionCell(factory, exchangeName, exchangeType, routingKey, time_out);
                 pool.put(connection);
                 numOfConnectionCreated++;
@@ -85,6 +90,16 @@ public class RabbitConnectionPool {
             log.warn("[Message : can not start connection pool] - [Connection pool : {}] - " + "[Exception : {}]",
                     this.toString(), e);
         }
+
+        // declare reply queue
+        try {
+            RabbitConnectionCell conn = pool.take();
+            conn.getChannel().queueDeclare(RabbitConnectionPoolConfig.REPLY_TO, true,false, false, null);
+//            releaseConnection(conn);
+        } catch (InterruptedException | IOException e) {
+            log.info("fail to create reply queue: ", e);
+        }
+
         thread.start();
         end_time = System.currentTimeMillis();
         log.info("Start Connection pool in : {} ms", (end_time - start_time));
@@ -93,7 +108,7 @@ public class RabbitConnectionPool {
     public synchronized RabbitConnectionCell getConnection() {
         log.info("begin creating rabbit connection!");
         RabbitConnectionCell connectionWraper = null;
-        if (pool.size() == 0 && numOfConnectionCreated < max_pool_size) {
+        if (pool.size() == 0 && numOfConnectionCreated < maxPoolSize) {
             connectionWraper = new RabbitConnectionCell(factory, exchangeName, exchangeType, routingKey, time_out);
             try {
                 pool.put(connectionWraper);

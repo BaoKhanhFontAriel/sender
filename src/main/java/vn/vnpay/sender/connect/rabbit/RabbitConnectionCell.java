@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,12 +15,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
-
-@Slf4j
 @Setter
 @Getter
 @ToString
+@Slf4j
 public class RabbitConnectionCell {
+
+//    private static final Logger log = LoggerFactory.getLogger(RabbitConnectionCell.class);
     private String exchangeName;
 
     private String exchangeType;
@@ -54,11 +57,10 @@ public class RabbitConnectionCell {
 
         try {
 
-            String replyQueueName = this.channel.queueDeclare().getQueue();
             AMQP.BasicProperties props = new AMQP.BasicProperties
                     .Builder()
                     .correlationId(corrId)
-                    .replyTo(replyQueueName)
+                    .replyTo(RabbitConnectionPoolConfig.REPLY_TO)
                     .build();
 
             // send message
@@ -67,7 +69,7 @@ public class RabbitConnectionCell {
             // receive message
             final CompletableFuture<String> response = new CompletableFuture<>();
 
-            String ctag = this.channel.basicConsume(replyQueueName, true, (consumerTag, delivery) -> {
+            String ctag = this.channel.basicConsume(RabbitConnectionPoolConfig.REPLY_TO, true, (consumerTag, delivery) -> {
                 if (delivery.getProperties().getCorrelationId().equals(corrId)) {
                     response.complete(new String(delivery.getBody(), StandardCharsets.UTF_8));
                 }
