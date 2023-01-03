@@ -16,9 +16,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Setter
 @Getter
 @ToString
+@Slf4j
 public class RabbitConnectionPool {
 
-    private static final Logger log = LoggerFactory.getLogger(RabbitConnectionCell.class);
+//    private static final Logger log = LoggerFactory.getLogger(RabbitConnectionCell.class);
     private LinkedBlockingQueue<RabbitConnectionCell> pool = new LinkedBlockingQueue<>();
 
     private  ConnectionFactory factory;
@@ -93,7 +94,7 @@ public class RabbitConnectionPool {
         // declare reply queue
         try {
             RabbitConnectionCell conn = pool.take();
-            conn.getChannel().queueDeclare(RabbitConnectionPoolConfig.REPLY_TO, false,false, false, null);
+            conn.getChannel().queueDeclare(RabbitConnectionPoolConfig.REPLY_TO, true,false, false, null);
 //            releaseConnection(conn);
         } catch (InterruptedException | IOException e) {
             log.info("fail to create reply queue: ", e);

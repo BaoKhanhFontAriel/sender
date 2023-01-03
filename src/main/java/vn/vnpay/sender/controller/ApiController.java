@@ -1,17 +1,13 @@
 package vn.vnpay.sender.controller;
 
 import com.sun.jersey.api.core.InjectParam;
-import lombok.extern.slf4j.Slf4j;
-import org.glassfish.jersey.client.ClientProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import vn.vnpay.sender.connect.rabbit.RabbitConnectionCell;
 import vn.vnpay.sender.service.ApiService;
-import vn.vnpay.sender.util.WebConfigSingleton;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
