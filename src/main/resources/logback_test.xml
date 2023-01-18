@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true" scanPeriod="60 seconds" debug="false">
-    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener"/>
+    <statusListener class="ch.qos.logback.core.status.OnConsoleStatusListener" />
 
     <contextName>api</contextName>
     <!-- Define log file input location -->
-    <property name="LOG_DIR" value="C:/logs/api"/>
+    <property name="LOG_DIR" value="C:/logs"/>
     <!-- Maximum log history 30 days -->
     <property name="maxHistory" value="1"/>
     <property name="maxFileSize" value="30MB"/>
     <property name="fileName" value="api"/>
-    <property name="pattern" value="%d %25.25M:%-4.4L - [%X{token}] - %m - %-22.22c{1.} %n"/>
+    <!--    <property name="pattern" value="%d %25.25M:%-4.4L - [%X{token}] - %m - %-22.22c{1.} %n"/>-->
 
     <!-- ERROR Level log -->
     <!-- Scroll to record the file, first record the log to the specified file, and when a certain condition is met, record the log to other files RollingFileAppender -->
@@ -34,10 +34,11 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
 
-        <encoder>
-            <pattern>${pattern}</pattern>
-        </encoder>
+        <!--        <encoder>-->
+        <!--            <pattern>${pattern}</pattern>-->
+        <!--        </encoder>-->
     </appender>
 
     <!-- WARN Level log appender -->
@@ -59,6 +60,7 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
 
         <encoder>
             <pattern>${pattern}</pattern>
@@ -84,10 +86,11 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
 
-        <encoder>
-            <pattern>${pattern}</pattern>
-        </encoder>
+        <!--        <encoder>-->
+        <!--            <pattern>${pattern}</pattern>-->
+        <!--        </encoder>-->
     </appender>
 
     <!-- DEBUG Level log appender -->
@@ -109,10 +112,11 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>
 
-        <encoder>
-            <pattern>${pattern}</pattern>
-        </encoder>
+        <!--        <encoder>-->
+        <!--            <pattern>${pattern}</pattern>-->
+        <!--        </encoder>-->
     </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -123,21 +127,20 @@
         </encoder>
     </appender>
 
-<!--    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
-<!--        <destination>10.22.22.75:5044</destination>-->
-
-<!--        &lt;!&ndash; encoder is required &ndash;&gt;-->
-<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
-<!--            <customFields>{"app_name":"api"} </customFields>-->
-<!--        </encoder>-->
-<!--    </appender>-->
+    <!--    <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--        <file>${LOG_DIR}/${LOG_FILE}.log</file>-->
+    <!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+    <!--            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+    <!--            <maxHistory>7</maxHistory>-->
+    <!--        </rollingPolicy>-->
+    <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+    <!--    </appender>-->
 
     <logger name="vn.vnpay.sender" additivity="false">
         <appender-ref ref="WARN" level="warn"/>
         <appender-ref ref="ERROR" level="error"/>
         <appender-ref ref="DEBUG" level="debug"/>
         <appender-ref ref="INFO" level="info"/>
-        <appender-ref ref="STASH" level="info"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
