@@ -37,33 +37,11 @@ public class ApiService {
 //        String response = conn.sendAndReceive(message);
 //        rabbitConnectionPool.releaseConnection(conn);
 
+        KafkaConnectionCell conn = kafkaConnectionPool.getConnection();
+        String response = conn.sendAndReceive(message);
+        kafkaConnectionPool.releaseConnection(conn);
 
-
-//        KafkaConnectionCell conn = kafkaConnectionPool.getConnection();
-//        String response = conn.sendAndReceive(message);
-//        kafkaConnectionPool.releaseConnection(conn);
-
-        String topic = "test-topic";
-        String bootstrapServers="127.0.0.1:9092";
-        String grp_id="kafka";
-
-        Properties consumerProps = new Properties();
-        consumerProps.setProperty(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,bootstrapServers);
-        consumerProps.setProperty(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG,   StringDeserializer.class.getName());
-        consumerProps.setProperty(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getName());
-        consumerProps.setProperty(ConsumerConfig.GROUP_ID_CONFIG,grp_id);
-        consumerProps.setProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest");
-
-        Properties producerConfig = new Properties();
-        producerConfig.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        producerConfig.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        producerConfig.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-
-
-        KafkaConnectionCell kafkaConnectionCell = new KafkaConnectionCell(consumerProps, producerConfig, topic, 1000);
-        kafkaConnectionCell.sendAndReceive(message);
-
-        return "ok";
+        return response;
     }
 
     public String createRequest(String data) {

@@ -18,34 +18,30 @@ import java.util.Properties;
 public class KafkaConnectionCell {
     private long relaxTime;
     private long timeOut;
-
-
-    private String topic;
-
     private boolean isClosed;
     private KafkaConsumer<String, String> consumer;
-
+    private String producerTopic;
+    private String consumerTopic;
     private KafkaProducer<String, String> producer;
 
-    public KafkaConnectionCell(Properties consumerProps, Properties producerProps,  String topic, long timeOut) {
-        producer = new KafkaProducer<String, String>(producerProps);
+    public KafkaConnectionCell(Properties consumerProps, Properties producerProps,  String consumerTopic, String producerTopic, long timeOut) {
+        producer = new KafkaProducer<>(producerProps);
         consumer = new KafkaConsumer<>(consumerProps);
-        this.topic = topic;
+
+        this.producerTopic = producerTopic;
+        this.consumerTopic = consumerTopic;
         this.timeOut = timeOut;
-        consumer.subscribe(Arrays.asList("reply-topic"));
-        log.info("Subscribed to topic " + topic);
+        consumer.subscribe(Arrays.asList(consumerTopic));
+        log.info("Subscribed to topic " + consumerTopic);
     }
 
-    public String sendAndReceive(String message) {
+    public  String sendAndReceive(String message) {
 
-        ProducerRecord<String, String> record = new ProducerRecord<>(topic, "Hello world");
+        ProducerRecord<String, String> record = new ProducerRecord<>(producerTopic, message);
         producer.send(record, (recordMetadata, e) -> {
             if (e == null) {
-                log.info("Successfully received the details as: \n" +
-                        "Topic:" + recordMetadata.topic() + "\n" +
-                        "Partition:" + recordMetadata.partition() + "\n" +
-                        "Offset" + recordMetadata.offset() + "\n" +
-                        "Timestamp" + recordMetadata.timestamp());
+                log.info("Successfully received the details as: Topic = {}, partition = {}, Offset = {}",
+                        recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
             }
 
             else {
@@ -54,16 +50,16 @@ public class KafkaConnectionCell {
         });
 
         // polling
-//        while (true) {
-//            ConsumerRecords<String, String> records = consumer.poll(100);
-//            for (ConsumerRecord<String, String> r : records) {
-//                log.info("----");
-//                log.info("rabbit begin receiving data: offset = %d, key = %s, value = %s\n",
-//                        r.offset(), r.key(), r.value());
-//            }
-//        }
-
-        return "ok";
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(100);
+            for (ConsumerRecord<String, String> r : records) {
+                log.info("----");
+                log.info("rabbit begin receiving data: offset = {}, key = {}, value = {}",
+                        r.offset(), r.key(), r.value());
+                String response = (String) r.value();
+                return response;
+            }
+        }
     }
 
     public boolean isTimeOut() {
