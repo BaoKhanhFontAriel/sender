@@ -1,0 +1,4 @@
+2023-02-03 10:22:01,911                     start:71   - [] - Create Kafka Consumer Connection pool........................  - ConsumerConnectionPool 
+2023-02-03 10:22:02,197                     start:86   - [] - Start Kafka Connection pool in : 285 ms - ConsumerConnectionPool 
+2023-02-03 10:22:02,200                     start:66   - [] - Create Kafka Producer Connection pool........................  - ProducerConnectionPool 
+2023-02-03 10:22:02,263                     start:81   - [] - Start Kafka Connection pool in : 62 ms - ProducerConnectionPool 

@@ -40,7 +40,7 @@ public class KafkaConnectionCell {
         ProducerRecord<String, String> record = new ProducerRecord<>(producerTopic, message);
         producer.send(record, (recordMetadata, e) -> {
             if (e == null) {
-                log.info("Successfully received the details as: Topic = {}, partition = {}, Offset = {}",
+                log.info("Kafka producer successfully send record as: Topic = {}, partition = {}, Offset = {}",
                         recordMetadata.topic(), recordMetadata.partition(), recordMetadata.offset());
             }
 
@@ -50,6 +50,7 @@ public class KafkaConnectionCell {
         });
 
         // polling
+        log.info("Kafka consumer waiting for message...");
         while (true) {
             ConsumerRecords<String, String> records = consumer.poll(100);
             for (ConsumerRecord<String, String> r : records) {
