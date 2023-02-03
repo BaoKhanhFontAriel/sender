@@ -5,7 +5,7 @@
 
     <contextName>api</contextName>
     <!-- Define log file input location -->
-    <property name="LOG_DIR" value="C:/logs/api"/>
+    <property name="LOG_DIR" value="logs"/>
     <!-- Maximum log history 30 days -->
     <property name="maxHistory" value="1"/>
     <property name="maxFileSize" value="30MB"/>
@@ -34,6 +34,7 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
 
         <encoder>
             <pattern>${pattern}</pattern>
@@ -59,6 +60,7 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
 
         <encoder>
             <pattern>${pattern}</pattern>
@@ -68,7 +70,7 @@
     <!-- INFO Level log appender -->
     <appender name="INFO"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/${fileName}.log</file>
+        <file>${LOG_DIR}/${fileName}-info.log</file>
         <!-- Filters, recording only INFO Level log -->
         <filter class="ch.qos.logback.classic.filter.LevelFilter">
             <level>INFO</level>
@@ -84,6 +86,7 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+        <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
 
         <encoder>
             <pattern>${pattern}</pattern>
@@ -109,6 +112,7 @@
                 <maxFileSize>${maxFileSize}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
         </rollingPolicy>
+<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
 
         <encoder>
             <pattern>${pattern}</pattern>
@@ -123,21 +127,20 @@
         </encoder>
     </appender>
 
-<!--    <appender name="STASH" class="net.logstash.logback.appender.LogstashTcpSocketAppender">-->
-<!--        <destination>10.22.22.75:5044</destination>-->
-
-<!--        &lt;!&ndash; encoder is required &ndash;&gt;-->
-<!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder">-->
-<!--            <customFields>{"app_name":"api"} </customFields>-->
-<!--        </encoder>-->
-<!--    </appender>-->
+    <!--    <appender name="STASH" class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+    <!--        <file>${LOG_DIR}/${LOG_FILE}.log</file>-->
+    <!--        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+    <!--            <fileNamePattern>${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+    <!--            <maxHistory>7</maxHistory>-->
+    <!--        </rollingPolicy>-->
+    <!--        <encoder class="net.logstash.logback.encoder.LogstashEncoder"/>-->
+    <!--    </appender>-->
 
     <logger name="vn.vnpay.sender" additivity="false">
         <appender-ref ref="WARN" level="warn"/>
         <appender-ref ref="ERROR" level="error"/>
         <appender-ref ref="DEBUG" level="debug"/>
         <appender-ref ref="INFO" level="info"/>
-        <appender-ref ref="STASH" level="info"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
