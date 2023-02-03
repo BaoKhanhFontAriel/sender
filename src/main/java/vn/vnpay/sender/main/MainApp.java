@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import vn.vnpay.sender.controller.ApiController;
 
+import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@ApplicationPath("app")
 public class MainApp extends Application {
     private Set<Object> singletons = new HashSet<>();
 
