@@ -18,11 +18,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-<<<<<<< HEAD
+
 @ApplicationPath("app")
-=======
 @Slf4j
->>>>>>> f05c2b48560f3cb74490666d9b586ab2d5f3c6da
 public class MainApp extends Application {
     private Set<Object> singleton = new HashSet<>();
     private static final RabbitConnectionPool rabbitConnectionPool = RabbitConnectionPool.getInstancePool();
